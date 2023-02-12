@@ -22,9 +22,13 @@ target_include_directories(allocators PUBLIC ${HEADERS})
 enable_testing()
 
 # Add CMocka CMake modules
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmocka)
-find_package(cmocka 1.1.0 REQUIRED)
-add_subdirectory(tests)
+if (UNIT_TESTING)
+    add_compile_definitions(UNIT_TESTING)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmocka)
+    find_package(cmocka 1.1.0 REQUIRED)
+    target_link_libraries(allocators PUBLIC ${CMOCKA_LIBRARIES})
+    add_subdirectory(tests)
+endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
