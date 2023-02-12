@@ -10,6 +10,12 @@
 #include <assert.h>
 
 uint8_t ChunkAlloc_Init(ChunkAlloc* alloc, size_t itemSize, size_t maxItems) {
+    uint8_t sizeAsBigAsPtr = itemSize >= sizeof(void*);
+    assert(sizeAsBigAsPtr);
+    if (!sizeAsBigAsPtr) {
+        return 1;
+    }
+
     alloc->pool = malloc(itemSize * maxItems);
     if (!alloc->pool) {
         return 1;
@@ -40,6 +46,9 @@ void ChunkAlloc_Deinit(ChunkAlloc* alloc) {
 
 void* ChunkAlloc_Get(ChunkAlloc* alloc) {
     assert(alloc->current);
+    if (!alloc->current) {
+        return NULL;
+    }
     
     void* ret = alloc->current;
     void* current = *((void**)alloc->current);
@@ -49,7 +58,13 @@ void* ChunkAlloc_Get(ChunkAlloc* alloc) {
 }
 
 void ChunkAlloc_Free(ChunkAlloc* alloc, void* item) {
-    assert(item < alloc->pool + (alloc->itemSize * alloc->maxItems));
+    uint8_t insidePool = item >= alloc->pool && item < (alloc->pool + (alloc->itemSize * alloc->maxItems));
+    uint8_t notCurrent = item != alloc->current;
+    assert(insidePool);
+    assert(notCurrent);
+    if (!insidePool && !notCurrent) {
+        return;
+    }
     
     *(void**)item = alloc->current;
     alloc->current = item;
