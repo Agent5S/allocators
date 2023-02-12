@@ -7,7 +7,7 @@
 
 #include <ChunkAlloc.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <assert_override.h>
 
 uint8_t ChunkAlloc_Init(ChunkAlloc* alloc, size_t itemSize, size_t maxItems) {
     uint8_t sizeAsBigAsPtr = itemSize >= sizeof(void*);
