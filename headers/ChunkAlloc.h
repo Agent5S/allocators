@@ -26,22 +26,40 @@ typedef struct {
 
 /**
  Initialize a chunk allocator
+
+ @param alloc Pointer to allocator
+ @param itemSize Size in bytes each item in the pool should have, 
+ should be at least as big as the platform's pointer size
+ @param maxItems Maximum number of items the pool should hold
+
+ @return 0 on success 1 on error
  */
-uint8_t ChunkAlloc_Init(ChunkAlloc*, size_t, size_t);
+uint8_t ChunkAlloc_Init(ChunkAlloc* alloc, size_t itemSize, size_t maxItems);
 
 /**
  Deinitialize a temporary allocator
-*/
-void ChunkAlloc_Deinit(ChunkAlloc*);
+
+ @param alloc Pointer to allocator
+ */
+void ChunkAlloc_Deinit(ChunkAlloc* alloc);
 
 /**
  Allocate an item in the pool
+
+ @param alloc Pointer to the allocator
+
+ @return Pointer to the allocated chunk o NULL if the pool is full
  */
-void* ChunkAlloc_Get(ChunkAlloc*);
+void* ChunkAlloc_Get(ChunkAlloc* alloc);
 
 /**
  Free an item from the pool
+
+ @param alloc Pointer to the allocator
+ @param item Pointer to the chunk to free
+
+ @todo Fail if an unaligned pointer is passed
  */
-void ChunkAlloc_Free(ChunkAlloc*, void*);
+void ChunkAlloc_Free(ChunkAlloc* alloc, void* item);
 
 #endif /* ChunkAlloc_h */
